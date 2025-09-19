@@ -11,6 +11,7 @@ baileys.log
 core.class.log
 queue.class.log
 bot.qr.png
+db.json
 
 # Archivos de sistema operativo
 .DS_Store
