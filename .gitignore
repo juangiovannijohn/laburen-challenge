@@ -1,0 +1,17 @@
+# Dependencias de Node
+node_modules
+
+# Variables de entorno
+.env
+
+# Sesión (WhatsApp)
+bot_sessions/
+
+baileys.log
+core.class.log
+queue.class.log
+bot.qr.png
+
+# Archivos de sistema operativo
+.DS_Store
+npm-debug.log

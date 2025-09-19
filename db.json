@@ -1,0 +1,51 @@
+[
+  {
+    "ref": "0042d1f9-d845-48c3-bca3-ee135506a763",
+    "keyword": "41f3101b7efee40596689eb1e57b6425",
+    "answer": "Hola",
+    "options": {},
+    "from": "5493518576432",
+    "refSerialize": "c22e4066d61d81721def9b25d8a397e8"
+  },
+  {
+    "ref": "ans_bb3ba001-d6ad-4e5d-bddd-9fe4da725e23",
+    "keyword": "key_4bdfc835-4791-4f65-8fa8-b13892ed1d6e",
+    "answer": "__call_action__",
+    "options": {
+      "buttons": [],
+      "capture": false,
+      "delay": 0,
+      "nested": [],
+      "keyword": {},
+      "callback": true
+    },
+    "refSerialize": "54a9018428c908ffa8fffb0ee1d622f8",
+    "from": "5493518576432"
+  },
+  {
+    "ref": "256364d9-02aa-416e-a76b-73742959ef22",
+    "keyword": null,
+    "answer": "¡Hola! 👋 Bienvenido a la tienda virtual.",
+    "options": {
+      "media": null,
+      "buttons": [],
+      "capture": false,
+      "delay": 0
+    },
+    "from": "5493518576432",
+    "refSerialize": "cb90f435b2431ce7d2672d6fdcb500ab"
+  },
+  {
+    "ref": "789264b7-55c1-4019-87b7-ecf570ccc391",
+    "keyword": null,
+    "answer": "Escribe lo que estás buscando y te ayudaré a encontrarlo. Por ejemplo: *\"busco una camiseta\"* o *\"qué chaquetas tienes?\"*.",
+    "options": {
+      "media": null,
+      "buttons": [],
+      "capture": false,
+      "delay": 0
+    },
+    "from": "5493518576432",
+    "refSerialize": "ef13e4e679b3abbfadd3274396de1855"
+  }
+]
