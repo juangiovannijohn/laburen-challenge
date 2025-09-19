@@ -162,3 +162,11 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 | `GET`    | `/products/context`   | Devuelve listas de nombres, categorías, etc. únicos. |
 | `POST`   | `/carts`              | Crea un nuevo carrito con productos.                |
 | `PATCH`  | `/carts/:id`          | Actualiza o elimina productos de un carrito.        |
+
+### 🧪 Probar la API con Postman
+
+Para facilitar las pruebas y la interacción con la API, se incluye una colección de Postman en el repositorio.
+
+- **Archivo:** `postman/Challengue-Laburen.postman_collection.json`
+
+Simplemente importa este archivo en tu cliente de Postman para tener todos los endpoints pre-configurados, incluyendo ejemplos de los cuerpos (`body`) necesarios para las peticiones `POST` y `PATCH`.
