@@ -130,21 +130,35 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 │
 ├── 📁 api_server/            # API REST y lógica de negocio
 │   ├── 📁 src/
-│   │   ├── 📁 config/        # Conexión a la base de datos (Supabase)
 │   │   ├── 📁 controllers/   # Controladores (capa HTTP)
 │   │   ├── 📁 services/      # Lógica de negocio (capa de servicio)
 │   │   └── 📁 routes/        # Endpoints de la API
 │   └── 📄 index.js           # Punto de entrada del servidor Express
 │
 ├── 📁 bot_workspace/          # Orquestador de chat y motor de IA
-│   ├── 📁 flows/             # Flujos de conversación de Builderbot
-│   │   └── agent.flow.js     # Flujo que delega la conversación a la IA
+│   ├── 📄 app.js             # Punto de entrada de Builderbot
 │   ├── 📁 ai_engine/          # Motor de Inteligencia Artificial
+│   │   ├── 📄 agent_executor.js # Orquestador que une LLM, prompts y tools
+│   │   ├── 📁 history/       # Lógica para el historial de conversación
+│   │   │   └── 📄 memory.js
 │   │   ├── 📁 llm/           # Cliente del LLM (OpenAI, Gemini, etc.)
+│   │   │   └── 📄 client.js
 │   │   ├── 📁 prompts/       # Instrucciones para el agente (System Prompt)
-│   │   ├── 📁 tools/         # Herramientas que la IA puede ejecutar
-│   │   └── 📄 agent_executor.js # Orquestador que une LLM, prompts y tools
-│   └── 📄 app.js             # Punto de entrada de Builderbot
+│   │   │   └── 📄 system_prompt.js
+│   │   └── 📁 tools/         # Herramientas que la IA puede ejecutar
+│   │       ├── 📄 index.js      # Exportador de herramientas
+│   │       ├── 📄 getProducts.js
+│   │       ├── 📄 getProductById.js
+│   │       ├── 📄 createCart.js
+│   │       └── 📄 updateCart.js
+│   ├── 📁 flows/             # Flujos de conversación de Builderbot
+│   │   ├── 📄 welcome.flow.js
+│   │   └── 📄 agent.flow.js
+│   └── 📁 provider/           # (Vacío) Configuración específica del proveedor
+│
+├── 📁 database/               # Lógica de conexión con Supabase
+│   ├── 📄 supabase.adapter.js # Adaptador para Builderbot
+│   └── 📄 supabase.js         # Cliente principal de Supabase
 │
 └── 📁 setup/
     └── 📁 db_scripts/

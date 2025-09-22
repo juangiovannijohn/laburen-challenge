@@ -14,7 +14,10 @@
     "dev": "concurrently \"npm:dev:api\" \"npm:dev:bot\"",
     "seed": "node setup/scripts/seed.js",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "start": "concurrently \"npm:start:api\" \"npm:start:bot\"",
+    "start:api": "node api_server/index.js",
+    "start:bot": "node bot_workspace/app.js"
   },
   "keywords": [],
   "author": "",

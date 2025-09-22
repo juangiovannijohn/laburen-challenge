@@ -7,7 +7,7 @@ import { agentFlow } from './flows/agent.flow.js';
 
 dotenv.config();
 
-const PORT = process.env.BOT_PORT || 3001;
+const PORT = process.env.BOT_PORT || 3002;
 
 const main = async () => {
   const adapterDB = new SupabaseDB();

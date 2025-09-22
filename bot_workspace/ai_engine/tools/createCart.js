@@ -1,5 +1,6 @@
-const API_URL = `http://localhost:${process.env.API_PORT || 3000}`;
-
+const API_URL = `${process.env.API_BASE_URL}:${process.env.API_PORT}/` || 'http://localhost:3001/';
+const route = '/carts';
+const url = `${API_URL}${route}`;
 export const createCartTool = {
   type: 'function',
   function: {
@@ -36,7 +37,7 @@ export const createCartTool = {
 
 export async function createCart({ items }) {
   try {
-    const response = await fetch(`${API_URL}/carts`, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

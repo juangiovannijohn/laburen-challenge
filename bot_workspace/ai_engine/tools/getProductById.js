@@ -1,4 +1,6 @@
-const API_URL = `http://localhost:${process.env.API_PORT || 3000}`;
+const API_URL = `${process.env.API_BASE_URL}:${process.env.API_PORT}/` || 'http://localhost:3001/';
+const route = '/products';
+const url = `${API_URL}${route}`;
 
 export const getProductByIdTool = {
   type: 'function',
@@ -21,7 +23,7 @@ export const getProductByIdTool = {
 
 export async function getProductById({ id }) {
   try {
-    const response = await fetch(`${API_URL}/products/${id}`);
+    const response = await fetch(`${url}/${id}`);
     const data = await response.json();
 
     if (!response.ok) {
