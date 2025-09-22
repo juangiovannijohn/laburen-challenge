@@ -35,3 +35,27 @@ CREATE TABLE cart_items (
 -- Después de ejecutar este script en el SQL Editor de Supabase,
 -- no olvides recargar el esquema de la API para que Supabase reconozca las nuevas tablas.
 -- Esto se hace yendo a la sección "API Docs" y haciendo clic en el botón de recargar.
+
+-- Tabla para el Historial de Conversaciones del Bot
+-- Almacena el historial de chat para cada usuario (identificado por 'phone').
+CREATE TABLE conversation_history (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    phone TEXT NOT NULL UNIQUE, -- El número de teléfono del usuario, actúa como ID único.
+    history JSONB, -- El historial de la conversación en formato JSON.
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ -- Función para añadir mensajes al historial de una conversación.
+ -- Crea un nuevo registro si el usuario no existe, o añade al historial si ya existe.
+   CREATE OR REPLACE FUNCTION append_to_history(phone_in TEXT, new_entries JSONB)
+    RETURNS void AS $$
+ BEGIN
+     INSERT INTO conversation_history (phone, history)
+        VALUES (phone_in, new_entries)
+     ON CONFLICT (phone)
+     DO UPDATE SET
+            history = conversation_history.history || new_entries,
+            updated_at = NOW();
+    END;
+    $$ LANGUAGE plpgsql;

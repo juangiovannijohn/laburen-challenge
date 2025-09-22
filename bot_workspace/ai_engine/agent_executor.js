@@ -69,7 +69,6 @@ export const runAgent = async (userInput, builderbotHistory, dynamicContext = ''
       // El LLM respondió directamente con texto
       return responseMessage.content;
     }
-
   } catch (error) {
     console.error('[AGENT]: Error en runAgent:', error);
     // Si hay un error inesperado, devolver un mensaje genérico para que el LLM lo maneje

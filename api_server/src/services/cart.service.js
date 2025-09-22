@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.js';
+import supabase from '../../../database/supabase.js';
 
 // Creamos una clase de error personalizada para manejar errores de negocio (ej. stock insuficiente)
 class BusinessLogicError extends Error {
@@ -14,7 +14,7 @@ export const createCartData = async (items) => {
     throw new BusinessLogicError('El campo "items" es requerido y debe ser un array con productos.', 400);
   }
 
-  const productIds = items.map(item => item.product_id);
+  const productIds = items.map((item) => item.product_id);
   const { data: productsInDB, error: productError } = await supabase
     .from('products')
     .select('id, stock')
@@ -32,22 +32,21 @@ export const createCartData = async (items) => {
       throw new BusinessLogicError(`El producto con id ${item.product_id} no fue encontrado.`, 404);
     }
     if (stockMap[item.product_id] < item.qty) {
-      throw new BusinessLogicError(`Stock insuficiente para el producto con id ${item.product_id}. Disponible: ${stockMap[item.product_id]}, Solicitado: ${item.qty}`, 400);
+      throw new BusinessLogicError(
+        `Stock insuficiente para el producto con id ${item.product_id}. Disponible: ${stockMap[item.product_id]}, Solicitado: ${item.qty}`,
+        400
+      );
     }
   }
 
-  const { data: cartData, error: cartError } = await supabase
-    .from('carts')
-    .insert({})
-    .select()
-    .single();
+  const { data: cartData, error: cartError } = await supabase.from('carts').insert({}).select().single();
 
   if (cartError) throw cartError;
 
-  const cartItemsToInsert = items.map(item => ({
+  const cartItemsToInsert = items.map((item) => ({
     cart_id: cartData.id,
     product_id: item.product_id,
-    qty: item.qty
+    qty: item.qty,
   }));
 
   const { data: cartItemsData, error: cartItemsError } = await supabase
@@ -62,14 +61,13 @@ export const createCartData = async (items) => {
 
 export const updateCartData = async (cartId, items) => {
   if (!items || !Array.isArray(items) || items.length === 0) {
-    throw new BusinessLogicError('El campo "items" es requerido y debe ser un array con productos para actualizar.', 400);
+    throw new BusinessLogicError(
+      'El campo "items" es requerido y debe ser un array con productos para actualizar.',
+      400
+    );
   }
 
-  const { data: existingCart, error: cartError } = await supabase
-    .from('carts')
-    .select('id')
-    .eq('id', cartId)
-    .single();
+  const { data: existingCart, error: cartError } = await supabase.from('carts').select('id').eq('id', cartId).single();
 
   if (cartError || !existingCart) {
     throw new BusinessLogicError('Carrito no encontrado.', 404);

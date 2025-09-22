@@ -1,7 +1,4 @@
-import {
-  createCartData,
-  updateCartData
-} from '../services/cart.service.js';
+import { createCartData, updateCartData } from '../services/cart.service.js';
 
 // El controlador ahora solo maneja req/res y llama al servicio.
 // La lógica de negocio y los errores específicos (ej. 404, 400) son manejados por el servicio.

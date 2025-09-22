@@ -1,37 +1,39 @@
 const API_URL = `http://localhost:${process.env.API_PORT || 3001}`;
 
 export const updateCartTool = {
-  type: "function",
+  type: 'function',
   function: {
-    name: "updateCart",
-    description: "Actualiza un carrito de compras existente. Permite cambiar la cantidad de un producto o eliminarlo (estableciendo la cantidad en 0).",
+    name: 'updateCart',
+    description:
+      'Actualiza un carrito de compras existente. Permite cambiar la cantidad de un producto o eliminarlo (estableciendo la cantidad en 0).',
     parameters: {
-      type: "object",
+      type: 'object',
       properties: {
         cart_id: {
-          type: "integer",
-          description: "El ID numérico del carrito que se va a modificar.",
+          type: 'integer',
+          description: 'El ID numérico del carrito que se va a modificar.',
         },
         items: {
-          type: "array",
-          description: "Un array de productos para actualizar en el carrito. Cada objeto debe tener 'product_id' y 'qty'. Si 'qty' es 0, el producto se eliminará.",
+          type: 'array',
+          description:
+            "Un array de productos para actualizar en el carrito. Cada objeto debe tener 'product_id' y 'qty'. Si 'qty' es 0, el producto se eliminará.",
           items: {
-            type: "object",
+            type: 'object',
             properties: {
               product_id: {
-                type: "integer",
-                description: "El ID del producto a actualizar.",
+                type: 'integer',
+                description: 'El ID del producto a actualizar.',
               },
               qty: {
-                type: "integer",
-                description: "La nueva cantidad del producto. Si es 0, el producto se elimina del carrito.",
+                type: 'integer',
+                description: 'La nueva cantidad del producto. Si es 0, el producto se elimina del carrito.',
               },
             },
-            required: ["product_id", "qty"],
+            required: ['product_id', 'qty'],
           },
         },
       },
-      required: ["cart_id", "items"],
+      required: ['cart_id', 'items'],
     },
   },
 };
@@ -52,7 +54,6 @@ export async function updateCart({ cart_id, items }) {
     }
 
     return JSON.stringify(data);
-
   } catch (error) {
     return `Error: No se pudo conectar con la API de carritos. Detalles: ${error.message}`;
   }

@@ -12,14 +12,15 @@
     "dev:api": "nodemon --watch api_server/ --ignore node_modules/ --ignore db.json --ignore auth_info_baileys/ --ext js,json api_server/index.js",
     "dev:bot": "nodemon --watch bot_workspace/ bot_workspace/app.js",
     "dev": "concurrently \"npm:dev:api\" \"npm:dev:bot\"",
-    "seed": "node setup/scripts/seed.js"
+    "seed": "node setup/scripts/seed.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@builderbot/bot": "^1.3.4",
-    "@builderbot/database-json": "^1.3.4",
     "@builderbot/provider-baileys": "^1.3.4",
     "@supabase/supabase-js": "^2.57.4",
     "cors": "^2.8.5",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
   }
 }

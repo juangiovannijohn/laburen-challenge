@@ -35,9 +35,9 @@ El proyecto sigue un enfoque de monorepo con dos componentes principales:
 
 La API sigue un patrón de diseño moderno para separar responsabilidades:
 
--   **Rutas (`/routes`):** Definen los endpoints de la API (ej. `/products`, `/carts/:id`).
--   **Controladores (`/controllers`):** Reciben las peticiones HTTP, validan entradas básicas y llaman a la capa de servicio. Su única función es manejar el ciclo de `request/response`.
--   **Servicios (`/services`):** Contienen toda la lógica de negocio. Realizan las consultas a la base de datos y aplican las reglas necesarias (verificar stock, validar datos, etc.). Son reutilizables y pueden ser llamados desde cualquier parte del sistema.
+- **Rutas (`/routes`):** Definen los endpoints de la API (ej. `/products`, `/carts/:id`).
+- **Controladores (`/controllers`):** Reciben las peticiones HTTP, validan entradas básicas y llaman a la capa de servicio. Su única función es manejar el ciclo de `request/response`.
+- **Servicios (`/services`):** Contienen toda la lógica de negocio. Realizan las consultas a la base de datos y aplican las reglas necesarias (verificar stock, validar datos, etc.). Son reutilizables y pueden ser llamados desde cualquier parte del sistema.
 
 ```
 [Petición HTTP] -> [Ruta] -> [Controlador] -> [Servicio] -> [Base de Datos]
@@ -155,13 +155,13 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 
 ## 🌐 Endpoints de la API
 
-| Método | Ruta                  | Descripción                                         |
-| :----- | :-------------------- | :-------------------------------------------------- |
-| `GET`    | `/products`           | Lista productos. Acepta filtro `?q=texto`.        |
-| `GET`    | `/products/:id`       | Obtiene el detalle de un producto por su ID.        |
-| `GET`    | `/products/context`   | Devuelve listas de nombres, categorías, etc. únicos. |
-| `POST`   | `/carts`              | Crea un nuevo carrito con productos.                |
-| `PATCH`  | `/carts/:id`          | Actualiza o elimina productos de un carrito.        |
+| Método  | Ruta                | Descripción                                          |
+| :------ | :------------------ | :--------------------------------------------------- |
+| `GET`   | `/products`         | Lista productos. Acepta filtro `?q=texto`.           |
+| `GET`   | `/products/:id`     | Obtiene el detalle de un producto por su ID.         |
+| `GET`   | `/products/context` | Devuelve listas de nombres, categorías, etc. únicos. |
+| `POST`  | `/carts`            | Crea un nuevo carrito con productos.                 |
+| `PATCH` | `/carts/:id`        | Actualiza o elimina productos de un carrito.         |
 
 ### 🧪 Probar la API con Postman
 

@@ -11,8 +11,8 @@ export const formatHistoryForLLM = (builderbotHistory) => {
   // Así que el formato ya es bastante compatible.
   // Podríamos añadir lógica para filtrar o resumir si el historial es muy largo.
 
-  return builderbotHistory.map(msg => ({
+  return builderbotHistory.map((msg) => ({
     role: msg.role,
-    content: msg.content
+    content: msg.content,
   }));
 };

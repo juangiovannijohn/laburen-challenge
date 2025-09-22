@@ -1,8 +1,4 @@
-import {
-  getProductsData,
-  getProductByIdData,
-  getProductContextData
-} from '../services/product.service.js';
+import { getProductsData, getProductByIdData, getProductContextData } from '../services/product.service.js';
 
 export const getProducts = async (req, res) => {
   try {
