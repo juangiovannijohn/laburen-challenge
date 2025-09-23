@@ -5,13 +5,9 @@ import { formatHistoryForLLM } from './history/memory.js';
 
 export const runAgent = async (userInput, builderbotHistory, dynamicContext = '') => {
   try {
-    // 1. Formatear el historial para el LLM
     const formattedHistory = formatHistoryForLLM(builderbotHistory);
-
-    // 2. Construir los mensajes para la API de OpenAI
     const finalSystemPrompt = `${dynamicContext}\n\n${SYSTEM_PROMPT}`;
 
-    // console.log('[AGENT]: runAgent - finalSystemPrompt:', finalSystemPrompt);
     console.log('[AGENT]: Iniciando runAgent...');
     const messages = [
       { role: 'system', content: finalSystemPrompt },
@@ -19,17 +15,17 @@ export const runAgent = async (userInput, builderbotHistory, dynamicContext = ''
       { role: 'user', content: userInput },
     ];
 
-    // 3. Llamar a la API de OpenAI con las herramientas disponibles
+    //TODO. utilizar nueva API
     const response = await openai.chat.completions.create({
       model: LLM_MODEL,
       messages: messages,
-      tools: toolsDefinitions, // Pasar las definiciones de las herramientas
-      tool_choice: 'auto', // Permitir que el LLM decida si usar una herramienta
+      tools: toolsDefinitions,
+      tool_choice: 'auto',
     });
 
     const responseMessage = response.choices[0].message;
 
-    // 4. Manejar la respuesta del LLM
+    // Necesita tools
     if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
       const toolCall = responseMessage.tool_calls[0]; // Asumimos una sola llamada a herramienta por turno
       const functionName = toolCall.function.name;
@@ -39,17 +35,16 @@ export const runAgent = async (userInput, builderbotHistory, dynamicContext = ''
         console.log(`[AGENT]: Llamando a la herramienta: ${functionName} con argumentos:`, functionArgs);
         const availableFunction = toolsImplementations[functionName];
 
-        // Ejecutar la herramienta, pasando los argumentos directamente
-        const result = await availableFunction(functionArgs); // Pasar el objeto de argumentos completo
+        const result = await availableFunction(functionArgs);
 
-        // Si la herramienta devuelve un error, el LLM debe manejarlo
+        // Error en la tool
         if (typeof result === 'string' && result.startsWith('Error:')) {
           console.error(`[AGENT]: Error en la herramienta ${functionName}: ${result}`);
-          return result; // Devolver el error para que el LLM lo procese
+          return result;
         }
 
         // Añadir la respuesta de la herramienta a los mensajes para la siguiente llamada al LLM
-        messages.push(responseMessage); // El mensaje original del LLM que pidió la herramienta
+        messages.push(responseMessage); // Mensaje original
         messages.push({
           tool_call_id: toolCall.id,
           role: 'tool',
@@ -62,7 +57,7 @@ export const runAgent = async (userInput, builderbotHistory, dynamicContext = ''
           messages: messages,
         });
 
-        return secondResponse.choices[0].message.content; // Devolver la respuesta final del LLM
+        return secondResponse.choices[0].message.content;
       } else {
         return `Error: El LLM intentó llamar a una herramienta no disponible: ${functionName}`;
       }
@@ -72,7 +67,6 @@ export const runAgent = async (userInput, builderbotHistory, dynamicContext = ''
     }
   } catch (error) {
     console.error('[AGENT]: Error en runAgent:', error);
-    // Si hay un error inesperado, devolver un mensaje genérico para que el LLM lo maneje
     return `Error: Ha ocurrido un error inesperado en el agente. Detalles: ${error.message}`;
   }
 };
