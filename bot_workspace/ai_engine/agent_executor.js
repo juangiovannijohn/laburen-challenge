@@ -5,13 +5,14 @@ import { formatHistoryForLLM } from './history/memory.js';
 
 export const runAgent = async (userInput, builderbotHistory, dynamicContext = '') => {
   try {
-    console.log('[AGENT]: runAgent - dynamicContext:', dynamicContext);
     // 1. Formatear el historial para el LLM
     const formattedHistory = formatHistoryForLLM(builderbotHistory);
 
     // 2. Construir los mensajes para la API de OpenAI
     const finalSystemPrompt = `${dynamicContext}\n\n${SYSTEM_PROMPT}`;
-    console.log('[AGENT]: runAgent - finalSystemPrompt:', finalSystemPrompt);
+    
+    // console.log('[AGENT]: runAgent - finalSystemPrompt:', finalSystemPrompt);
+    console.log('[AGENT]: Iniciando runAgent...');
     const messages = [
       { role: 'system', content: finalSystemPrompt },
       ...formattedHistory,

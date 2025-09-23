@@ -1,6 +1,6 @@
-const API_URL = `${process.env.API_BASE_URL}:${process.env.API_PORT}/` || 'http://localhost:3001/';
-const route = '/carts';
-const url = `${API_URL}${route}`;
+import config from '../../../config/config.js'; 
+const route = 'carts';
+const url = `${config.API_URL}${route}`;
 export const createCartTool = {
   type: 'function',
   function: {
@@ -37,6 +37,7 @@ export const createCartTool = {
 
 export async function createCart({ items }) {
   try {
+    console.log('[ENDPOINT]: createCart', url);
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -45,7 +46,7 @@ export async function createCart({ items }) {
       body: JSON.stringify({ items }),
     });
     const data = await response.json();
-
+    console.log('[DATA]: createCart', data);
     if (!response.ok) {
       return `Error: La API de carritos devolvió un error: ${data.error || response.statusText}`;
     }

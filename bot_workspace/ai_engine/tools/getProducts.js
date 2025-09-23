@@ -1,6 +1,6 @@
-const API_URL = `${process.env.API_BASE_URL}:${process.env.API_PORT}/` || 'http://localhost:3001/';
-const route = '/products';
-const url = `${API_URL}${route}`;
+import config from '../../../config/config.js'; 
+const route = 'products';
+const url = `${config.API_URL}${route}`;
 
 export const getProductsTool = {
   type: 'function',
@@ -24,6 +24,7 @@ export const getProductsTool = {
 
 export async function getProducts({ query = '' } = {}) {
   try {
+    console.log('[ENDPOINT]: getProducts', `${url}?q=${encodeURIComponent(query)}`);
     const response = await fetch(`${url}?q=${encodeURIComponent(query)}`);
     const data = await response.json();
 

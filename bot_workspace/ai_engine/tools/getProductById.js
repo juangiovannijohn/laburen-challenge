@@ -1,6 +1,6 @@
-const API_URL = `${process.env.API_BASE_URL}:${process.env.API_PORT}/` || 'http://localhost:3001/';
-const route = '/products';
-const url = `${API_URL}${route}`;
+import config from '../../../config/config.js'; 
+const route = 'products';
+const url = `${config.API_URL}${route}`;
 
 export const getProductByIdTool = {
   type: 'function',
@@ -23,9 +23,10 @@ export const getProductByIdTool = {
 
 export async function getProductById({ id }) {
   try {
+    console.log('[ENDPOINT]: getProductById', `${url}/${id}`);
     const response = await fetch(`${url}/${id}`);
     const data = await response.json();
-
+    console.log('[DATA]: getProductById', data);
     if (!response.ok) {
       return `Error: La API de productos devolvió un error: ${data.error || response.statusText}`;
     }
