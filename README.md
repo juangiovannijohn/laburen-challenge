@@ -124,45 +124,55 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 
 ```
 /
-├── 📄 .env                  # Variables de entorno (claves, etc.)
-├── 📄 package.json           # Dependencias y scripts del proyecto
-├── 📄 README.md               # Esta documentación
+├── 📄 .env.example          # Archivo de ejemplo para las variables de entorno
+├── 📄 Procfile              # Configuración para despliegues en plataformas como Railway
+├── 📄 README.md             # Esta documentación
 │
 ├── 📁 api_server/            # API REST y lógica de negocio
-│   ├── 📁 src/
-│   │   ├── 📁 controllers/   # Controladores (capa HTTP)
-│   │   ├── 📁 services/      # Lógica de negocio (capa de servicio)
-│   │   └── 📁 routes/        # Endpoints de la API
-│   └── 📄 index.js           # Punto de entrada del servidor Express
+│   ├── 📄 api.js             # Punto de entrada de la API para entornos serverless (ej. Vercel)
+│   ├── 📄 index.js           # Punto de entrada del servidor Express para desarrollo local
+│   └── 📁 src/
+│       ├── 📁 controllers/   # Controladores (capa HTTP)
+│       ├── 📁 routes/        # Endpoints de la API
+│       └── 📁 services/      # Lógica de negocio (capa de servicio)
 │
 ├── 📁 bot_workspace/          # Orquestador de chat y motor de IA
 │   ├── 📄 app.js             # Punto de entrada de Builderbot
 │   ├── 📁 ai_engine/          # Motor de Inteligencia Artificial
 │   │   ├── 📄 agent_executor.js # Orquestador que une LLM, prompts y tools
-│   │   ├── 📁 history/       # Lógica para el historial de conversación
+│   │   ├── 📁 history/       # Gestión del historial de conversación para el LLM
 │   │   │   └── 📄 memory.js
 │   │   ├── 📁 llm/           # Cliente del LLM (OpenAI, Gemini, etc.)
 │   │   │   └── 📄 client.js
 │   │   ├── 📁 prompts/       # Instrucciones para el agente (System Prompt)
 │   │   │   └── 📄 system_prompt.js
 │   │   └── 📁 tools/         # Herramientas que la IA puede ejecutar
-│   │       ├── 📄 index.js      # Exportador de herramientas
-│   │       ├── 📄 getProducts.js
-│   │       ├── 📄 getProductById.js
 │   │       ├── 📄 createCart.js
+│   │       ├── 📄 getProductById.js
+│   │       ├── 📄 getProducts.js
+│   │       ├── 📄 index.js      # Exportador de herramientas
 │   │       └── 📄 updateCart.js
-│   ├── 📁 flows/             # Flujos de conversación de Builderbot
-│   │   ├── 📄 welcome.flow.js
-│   │   └── 📄 agent.flow.js
-│   └── 📁 provider/           # (Vacío) Configuración específica del proveedor
+│   └── 📁 flows/             # Flujos de conversación de Builderbot
+│       ├── 📄 agent.flow.js
+│       └── 📄 welcome.flow.js
+│
+├── 📁 config/                 # Archivos de configuración global
+│   └── 📄 config.js           # Configuración de variables de entorno y URLs de API
 │
 ├── 📁 database/               # Lógica de conexión con Supabase
-│   ├── 📄 supabase.adapter.js # Adaptador para Builderbot
+│   ├── 📄 supabase.adapter.js # Adaptador de Supabase para Builderbot
 │   └── 📄 supabase.js         # Cliente principal de Supabase
 │
-└── 📁 setup/
-    └── 📁 db_scripts/
-        └── schema.sql      # Esquema de la base de datos
+├── 📁 postman/                # Colecciones de Postman para probar la API
+│   └── 📄 Challengue-Laburen.postman_collection.json
+│
+├── 📁 setup/                  # Scripts de configuración inicial
+│   ├── 📁 data/              # Datos de ejemplo (ej. productos)
+│   │   └── 📄 products.csv
+│   ├── 📁 db_scripts/        # Scripts SQL para la base de datos
+│   │   └── 📄 schema.sql
+│   └── 📁 scripts/           # Otros scripts de configuración (ej. seeding)
+│       └── 📄 seed.js
 ```
 
 ---
