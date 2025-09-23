@@ -7,11 +7,12 @@ console.log('[Environment]:', environment);
 
 const config = {
   development: {
-    API_URL: process.env.API_BASE_URL ? `${process.env.API_BASE_URL}:${process.env.API_PORT || 3001}/` : 'http://localhost:3001/',
-
+    API_URL: process.env.API_BASE_URL
+      ? `${process.env.API_BASE_URL}:${process.env.API_PORT || 3001}/`
+      : 'http://localhost:3001/',
   },
   production: {
-    API_URL: process.env.API_URL
+    API_URL: process.env.API_URL,
   },
 };
 

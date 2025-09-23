@@ -10,7 +10,7 @@ export const runAgent = async (userInput, builderbotHistory, dynamicContext = ''
 
     // 2. Construir los mensajes para la API de OpenAI
     const finalSystemPrompt = `${dynamicContext}\n\n${SYSTEM_PROMPT}`;
-    
+
     // console.log('[AGENT]: runAgent - finalSystemPrompt:', finalSystemPrompt);
     console.log('[AGENT]: Iniciando runAgent...');
     const messages = [

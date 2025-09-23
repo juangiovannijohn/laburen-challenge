@@ -51,9 +51,7 @@ export const createCartData = async (items) => {
 
 export const updateCartData = async (cartId, items) => {
   if (!items || !Array.isArray(items) || items.length === 0) {
-    throw new Error(
-      'El campo "items" es requerido y debe ser un array con productos para actualizar.'
-    );
+    throw new Error('El campo "items" es requerido y debe ser un array con productos para actualizar.');
   }
 
   const { data: existingCart, error: cartError } = await supabase.from('carts').select('id').eq('id', cartId).single();

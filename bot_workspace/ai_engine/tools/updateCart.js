@@ -1,4 +1,4 @@
-import config from '../../../config/config.js'; 
+import config from '../../../config/config.js';
 const route = 'carts';
 const url = `${config.API_URL}${route}`;
 export const updateCartTool = {
