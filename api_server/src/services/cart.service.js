@@ -1,17 +1,8 @@
 import supabase from '../../../database/supabase.js';
 
-// Creamos una clase de error personalizada para manejar errores de negocio (ej. stock insuficiente)
-class BusinessLogicError extends Error {
-  constructor(message, statusCode = 400) {
-    super(message);
-    this.name = 'BusinessLogicError';
-    this.statusCode = statusCode;
-  }
-}
-
 export const createCartData = async (items) => {
   if (!items || !Array.isArray(items) || items.length === 0) {
-    throw new BusinessLogicError('El campo "items" es requerido y debe ser un array con productos.', 400);
+    throw new Error('El campo "items" es requerido y debe ser un array con productos.');
   }
 
   const productIds = items.map((item) => item.product_id);
@@ -29,12 +20,11 @@ export const createCartData = async (items) => {
 
   for (const item of items) {
     if (!stockMap[item.product_id]) {
-      throw new BusinessLogicError(`El producto con id ${item.product_id} no fue encontrado.`, 404);
+      throw new Error(`El producto con id ${item.product_id} no fue encontrado.`);
     }
     if (stockMap[item.product_id] < item.qty) {
-      throw new BusinessLogicError(
-        `Stock insuficiente para el producto con id ${item.product_id}. Disponible: ${stockMap[item.product_id]}, Solicitado: ${item.qty}`,
-        400
+      throw new Error(
+        `Stock insuficiente para el producto con id ${item.product_id}. Disponible: ${stockMap[item.product_id]}, Solicitado: ${item.qty}`
       );
     }
   }
@@ -61,23 +51,22 @@ export const createCartData = async (items) => {
 
 export const updateCartData = async (cartId, items) => {
   if (!items || !Array.isArray(items) || items.length === 0) {
-    throw new BusinessLogicError(
-      'El campo "items" es requerido y debe ser un array con productos para actualizar.',
-      400
+    throw new Error(
+      'El campo "items" es requerido y debe ser un array con productos para actualizar.'
     );
   }
 
   const { data: existingCart, error: cartError } = await supabase.from('carts').select('id').eq('id', cartId).single();
 
   if (cartError || !existingCart) {
-    throw new BusinessLogicError('Carrito no encontrado.', 404);
+    throw new Error('Carrito no encontrado.');
   }
 
   for (const item of items) {
     const { product_id, qty } = item;
 
     if (typeof product_id !== 'number' || product_id <= 0 || typeof qty !== 'number' || qty < 0) {
-      throw new BusinessLogicError(`Datos inválidos para product_id ${product_id} o qty ${qty}.`, 400);
+      throw new Error(`Datos inválidos para product_id ${product_id} o qty ${qty}.`);
     }
 
     if (qty === 0) {

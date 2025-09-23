@@ -15,5 +15,4 @@ app.get('/', (req, res) => {
   res.send('API Server is running!');
 });
 
-// Export the app for Vercel
 export default app;

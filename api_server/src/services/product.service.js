@@ -1,5 +1,4 @@
 import supabase from '../../../database/supabase.js';
-
 /**
  * Obtiene listas de valores únicos para nombres, categorías, colores y tallas de productos.
  * @returns {Promise<object>} Un objeto con arrays de valores únicos.
@@ -67,8 +66,6 @@ export const getProductByIdData = async (id) => {
     const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
 
     if (error) {
-      // Si el código de error indica "no rows found", es un 404, pero devolvemos null
-      // para que el llamador decida cómo manejarlo.
       if (error.code === 'PGRST116') {
         return null;
       }
