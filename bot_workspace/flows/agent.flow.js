@@ -18,7 +18,7 @@ const agentFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { flowDynamic
             `;
 
     const db = new SupabaseDB();
-    const history = await db.get(ctx.from);
+    const history = (await db.get(ctx.from)) || [];
     ctx.history = history;
 
     const aiResponse = await runAgent(ctx.body, ctx.history, dynamicContext);
