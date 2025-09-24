@@ -12,7 +12,7 @@ const PORT = process.env.BOT_PORT || 3002;
 const main = async () => {
   const adapterDB = new SupabaseDB();
 
-  const adapterFlow = createFlow([welcomeFlow, agentFlow]);
+  const adapterFlow = createFlow([agentFlow]);
   const adapterProvider = createProvider(BaileysProvider);
 
   const { handleCtx, httpServer } = await createBot({
