@@ -47,15 +47,15 @@ CREATE TABLE conversation_history (
 );
 
  -- Función para añadir mensajes al historial de una conversación.
- -- Crea un nuevo registro si el usuario no existe, o añade al historial si ya existe.
-   CREATE OR REPLACE FUNCTION append_to_history(phone_in TEXT, new_entries JSONB)
-    RETURNS void AS $$
- BEGIN
-     INSERT INTO conversation_history (phone, history)
-        VALUES (phone_in, new_entries)
-     ON CONFLICT (phone)
-     DO UPDATE SET
-            history = conversation_history.history || new_entries,
+-- Crea un nuevo registro si el usuario no existe (UPSERT).
+CREATE OR REPLACE FUNCTION append_to_history(p_phone TEXT, p_new_entries JSONB)
+    RETURNS VOID AS $func$
+BEGIN
+    INSERT INTO conversation_history (phone, history, created_at, updated_at) 
+        VALUES (p_phone, p_new_entries, NOW(), NOW()) 
+    ON CONFLICT (phone)
+    DO UPDATE SET 
+            history = conversation_history.history || p_new_entries,
             updated_at = NOW();
     END;
-    $$ LANGUAGE plpgsql;
+    $func$ LANGUAGE plpgsql;

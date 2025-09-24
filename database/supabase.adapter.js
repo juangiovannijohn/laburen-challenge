@@ -55,8 +55,8 @@ class SupabaseDB extends MemoryDB {
 
     try {
       const { error } = await supabase.rpc('append_to_history', {
-        phone_in: ctx.from,
-        new_entries: JSON.stringify(newEntries),
+        p_phone: ctx.from,
+        p_new_entries: JSON.stringify(newEntries),
       });
 
       if (error) {

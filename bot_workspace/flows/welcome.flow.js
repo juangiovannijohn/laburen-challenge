@@ -15,10 +15,10 @@ const welcomeFlow = addKeyword(['hola', 'buenas', 'hey', 'buenos dias', 'buenas 
     await waitT(1000);
     await flowDynamic(
       'Soy tu asistente de ventas. Puedo ayudarte a:\n\n' +
-      '- **Buscar productos:** Encuentra lo que necesitas en nuestro catálogo, ya sea por nombre, tipo de prenda, talla, color o categoría.\n' +
-      '- **Ver detalles de productos:** Si tienes el ID de un producto, puedo darte toda su información.\n' +
-      '- **Gestionar tu carrito de compras:** Puedes crear un carrito, añadir productos, modificar cantidades o eliminar ítems.\n\n' +
-      '¿En qué puedo ayudarte hoy?'
+        '- **Buscar productos:** Encuentra lo que necesitas en nuestro catálogo, ya sea por nombre, tipo de prenda, talla, color o categoría.\n' +
+        '- **Ver detalles de productos:** Si tienes el ID de un producto, puedo darte toda su información.\n' +
+        '- **Gestionar tu carrito de compras:** Puedes crear un carrito, añadir productos, modificar cantidades o eliminar ítems.\n\n' +
+        '¿En qué puedo ayudarte hoy?'
     );
   }
 );

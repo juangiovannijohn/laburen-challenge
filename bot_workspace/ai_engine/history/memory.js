@@ -3,28 +3,21 @@ export const formatHistoryForLLM = (builderbotHistory) => {
     return [];
   }
 
-  let formattedHistory = [];
-
-  if (typeof builderbotHistory[0] === 'string') {
-    builderbotHistory.forEach((jsonString) => {
-      try {
-        const parsed = JSON.parse(jsonString);
-
-        if (Array.isArray(parsed)) {
-          formattedHistory = formattedHistory.concat(parsed);
-        } else if (typeof parsed === 'object') {
-          formattedHistory.push(parsed);
-        }
-      } catch (error) {
-        console.error('[ERROR] Parseando entrada de historial:', error, jsonString);
-      }
-    });
-  } else {
-    formattedHistory = builderbotHistory.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    }));
+  if (typeof builderbotHistory === 'string') {
+    return JSON.parse(builderbotHistory);
   }
 
-  return formattedHistory;
+  let formattedHistory = [];
+  if (Array.isArray(builderbotHistory)) {
+    builderbotHistory.forEach((miniArray) => {
+      const miniArrayParsed = JSON.parse(miniArray);
+
+      formattedHistory.push({
+        role: miniArrayParsed[0].role,
+        content: miniArrayParsed[0].content,
+      });
+    });
+
+    return formattedHistory;
+  }
 };
