@@ -125,6 +125,9 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 ```
 /
 ├── 📄 .env.example          # Archivo de ejemplo para las variables de entorno
+├── 📄 .prettierrc.json      # Configuración de Prettier para el formato de código
+├── 📄 package-lock.json     # Bloqueo de versiones de dependencias de npm
+├── 📄 package.json          # Dependencias y scripts del proyecto
 ├── 📄 Procfile              # Configuración para despliegues en plataformas como Railway
 ├── 📄 README.md             # Esta documentación
 │
@@ -163,6 +166,10 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 │   ├── 📄 supabase.adapter.js # Adaptador de Supabase para Builderbot
 │   └── 📄 supabase.js         # Cliente principal de Supabase
 │
+├── 📁 docs/                   # Documentación conceptual y diagramas del proyecto
+│   ├── 📄 ArquitecturaDeAltoNivel.md
+│   └── 📄 MapaDeFlujo.md
+│
 ├── 📁 postman/                # Colecciones de Postman para probar la API
 │   └── 📄 Challengue-Laburen.postman_collection.json
 │
@@ -173,6 +180,7 @@ Una vez que el proyecto esté corriendo, el proveedor de WhatsApp (`@builderbot/
 │   │   └── 📄 schema.sql
 │   └── 📁 scripts/           # Otros scripts de configuración (ej. seeding)
 │       └── 📄 seed.js
+
 ```
 
 ---
