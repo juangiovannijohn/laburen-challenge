@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { createBot, createProvider, createFlow } from '@builderbot/bot';
 import { BaileysProvider } from '@builderbot/provider-baileys';
 import SupabaseDB from '../database/supabase.adapter.js';
-import SessionSyncService from './session-sync.js';
+import SessionSyncService from '../database/services/session-sync.js';
 import { welcomeFlow } from './flows/welcome.flow.js';
 import { agentFlow } from './flows/agent.flow.js';
 
