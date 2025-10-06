@@ -12,10 +12,6 @@ const PORT = process.env.BOT_PORT || 3002;
 
 const main = async () => {
   try {
-    console.log('[DEBUG]: Variables de entorno cargadas:');
-    console.log('- SUPABASE_URL:', process.env.SUPABASE_URL ? '✅ Configurada' : '❌ No encontrada');
-    console.log('- SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? '✅ Configurada' : '❌ No encontrada');
-    console.log('- BOT_PORT:', process.env.BOT_PORT || 'Usando puerto por defecto');
 
     const adapterDB = new SupabaseDB();
 
