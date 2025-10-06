@@ -8,6 +8,31 @@ class SupabaseDB extends MemoryDB {
   }
 
   /**
+   * Método requerido por BuilderBot para obtener mensajes previos por número
+   * @param {string} phone - El número de teléfono del usuario
+   * @returns {Promise<Array>} - Array de mensajes previos
+   */
+  async getPrevByNumber(phone) {
+    try {
+      const { data, error } = await supabase
+        .from('conversation_history')
+        .select('history')
+        .eq('phone', phone)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error en getPrevByNumber:', error);
+        return [];
+      }
+
+      return data?.history || [];
+    } catch (error) {
+      console.error(`Error al obtener mensajes previos para ${phone}:`, error);
+      return [];
+    }
+  }
+
+  /**
    * Obtiene el historial completo de una conversación desde Supabase.
    * Este método es llamado por el bot para poblar `ctx.history`.
    * @param {string} phone - El número de teléfono del usuario.

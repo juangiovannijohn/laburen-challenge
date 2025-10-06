@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { createBot, createProvider, createFlow } from '@builderbot/bot';
 import { BaileysProvider } from '@builderbot/provider-baileys';
 import SupabaseDB from '../database/supabase.adapter.js';
+import SessionSyncService from './session-sync.js';
 import { welcomeFlow } from './flows/welcome.flow.js';
 import { agentFlow } from './flows/agent.flow.js';
 
@@ -10,25 +11,109 @@ dotenv.config();
 const PORT = process.env.BOT_PORT || 3002;
 
 const main = async () => {
-  const adapterDB = new SupabaseDB();
+  try {
+    console.log('[DEBUG]: Variables de entorno cargadas:');
+    console.log('- SUPABASE_URL:', process.env.SUPABASE_URL ? '✅ Configurada' : '❌ No encontrada');
+    console.log('- SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? '✅ Configurada' : '❌ No encontrada');
+    console.log('- BOT_PORT:', process.env.BOT_PORT || 'Usando puerto por defecto');
 
-  const adapterFlow = createFlow([agentFlow]);
-  const adapterProvider = createProvider(BaileysProvider);
+    const adapterDB = new SupabaseDB();
 
-  const { handleCtx, httpServer } = await createBot({
-    flow: adapterFlow,
-    provider: adapterProvider,
-    database: adapterDB,
-  });
+    // Inicializar servicio de sincronización de sesiones
+    console.log('[DEBUG]: Inicializando sincronización de sesiones con Supabase...');
+    const sessionSync = new SessionSyncService(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_KEY
+    );
+    
+    // Inicializar el servicio y verificar auto-restauración
+    try {
+      await sessionSync.init();
+      console.log('[SessionSync]: ✅ Servicio inicializado correctamente');
+      
+      // Verificar y restaurar archivos de sesión si es necesario
+      console.log('[SessionSync]: 🔍 Verificando archivos de sesión...');
+      await sessionSync.checkAndAutoRestore();
+      
+    } catch (error) {
+      console.warn('[DEBUG]: Sincronización de sesiones no disponible:', error.message);
+    }
 
-  adapterProvider.on('ready', () => {
-    console.log('[LOG]: ¡Conexión exitosa con WhatsApp!');
-    console.log('[LOG]: Ya puedes enviar mensajes.');
-  });
+    const adapterFlow = createFlow([agentFlow]);
+    
+    // Usar autenticación local estándar de BuilderBot
+    console.log('[DEBUG]: Configurando autenticación local...');
+    const adapterProvider = createProvider(BaileysProvider);
 
-  httpServer(+PORT);
-  console.log(`[LOG]: Servidor del bot iniciado en el puerto ${PORT}.`);
-  console.log('[LOG]: Esperando la conexión con WhatsApp...');
+    // Manejar eventos de conexión y errores
+    adapterProvider.on('ready', async () => {
+      console.log('[LOG]: ¡Conexión exitosa con WhatsApp!');
+      console.log('[LOG]: Ya puedes enviar mensajes.');
+      
+      // Realizar backup de archivos de sesión después de conexión exitosa
+      try {
+        console.log('[SessionSync]: 💾 Realizando backup después de conexión exitosa...');
+        await sessionSync.backupAllFiles();
+        console.log('[SessionSync]: ✅ Backup completado después de conexión');
+      } catch (error) {
+        console.warn('[SessionSync]: ⚠️ Error al realizar backup después de conexión:', error.message);
+      }
+    });
+
+    adapterProvider.on('auth_failure', (error) => {
+      console.error('⚡⚡ ERROR DE AUTENTICACIÓN ⚡⚡');
+      console.error('Detalles del error:', error);
+      console.error('Posibles causas:');
+      console.error('1. Problema con la carpeta bot_sessions');
+      console.error('2. Permisos de escritura en el directorio');
+      console.error('3. Archivos de sesión corruptos');
+    });
+
+    adapterProvider.on('qr', (qr) => {
+      console.log('[LOG]: Código QR generado. Escanéalo con WhatsApp.');
+    });
+
+    adapterProvider.on('message', async (message) => {
+      console.log('[DEBUG]: Mensaje recibido:', message.body);
+      
+      // Detectar mensajes undefined (causados por errores Bad MAC)
+      if (message.body === undefined && message.from) {
+        console.log('[SessionSync]: 🚨 Mensaje undefined detectado (posible Bad MAC), enviando mensaje de error');
+        return; // No procesar más este mensaje
+      }
+    });
+
+    const { handleCtx, httpServer } = await createBot({
+      flow: adapterFlow,
+      provider: adapterProvider,
+      database: adapterDB,
+    });
+
+    // Capturar errores no manejados del proveedor (después de crear el bot)
+    adapterProvider.on('error', async (error) => {
+      console.error('⚡⚡ ERROR DEL PROVEEDOR ⚡⚡');
+      console.error('Error completo:', error);
+    });
+
+    httpServer(+PORT);
+    console.log(`[LOG]: Servidor del bot iniciado en el puerto ${PORT}.`);
+    console.log('[LOG]: Esperando la conexión con WhatsApp...');
+  } catch (error) {
+    console.error('⚡⚡ ERROR EN MAIN ⚡⚡');
+    console.error('Error completo:', error);
+    console.error('Stack trace:', error.stack);
+    
+    // Verificar si es un error relacionado con archivos locales
+    if (error.message && (error.message.includes('ENOENT') || error.message.includes('permission'))) {
+      console.error('\n🔧 SOLUCIÓN REQUERIDA:');
+      console.error('Problema con archivos de sesión local:');
+      console.error('1. Verifica que el directorio tenga permisos de escritura');
+      console.error('2. Elimina la carpeta bot_sessions si existe');
+      console.error('3. Reinicia el bot para generar nuevas credenciales');
+    }
+    
+    process.exit(1);
+  }
 };
 
 main();
