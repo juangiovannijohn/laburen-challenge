@@ -3,12 +3,24 @@ import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 
 class SessionSyncService {
-  constructor(supabaseUrl, supabaseKey, bucketName = 'whatsapp-sessions') {
+  constructor(supabaseUrl, supabaseKey, bucketName = null) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
-    this.bucketName = bucketName;
+    
+    // Determinar bucket basado en el ambiente si no se especifica
+    if (!bucketName) {
+      const environment = process.env.NODE_ENV || 'development';
+      this.bucketName = environment === 'production' 
+        ? 'whatsapp-sessions-prod' 
+        : 'whatsapp-sessions-dev';
+    } else {
+      this.bucketName = bucketName;
+    }
+    
     this.sessionDir = path.join(process.cwd(), 'bot_sessions');
     this.syncInterval = null;
     this.isInitialized = false;
+    
+    console.log(`[SessionSync]: Usando bucket: ${this.bucketName} (ambiente: ${process.env.NODE_ENV || 'development'})`);
   }
 
   async init() {
@@ -24,7 +36,7 @@ class SessionSyncService {
         console.log(`[SessionSync]: Creando bucket ${this.bucketName}...`);
         const { error: createError } = await this.supabase.storage.createBucket(this.bucketName, {
           public: false,
-          allowedMimeTypes: ['application/json'],
+          allowedMimeTypes: null,
           fileSizeLimit: 1024 * 1024 // 1MB
         });
         if (createError) throw createError;

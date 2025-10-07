@@ -6,14 +6,26 @@ import { initAuthCreds } from 'baileys'
  * Reemplaza el comportamiento de useMultiFileAuthState para usar Supabase en lugar del sistema de archivos
  */
 class SupabaseAuthState {
-    constructor(supabaseUrl, supabaseKey, bucketName = 'whatsapp-sessions', sessionId = 'default') {
+    constructor(supabaseUrl, supabaseKey, bucketName = null, sessionId = 'default') {
         this.supabase = createClient(supabaseUrl, supabaseKey)
-        this.bucketName = bucketName
+        
+        // Determinar bucket basado en el ambiente si no se especifica
+        if (!bucketName) {
+            const environment = process.env.NODE_ENV || 'development';
+            this.bucketName = environment === 'production' 
+                ? 'whatsapp-sessions-prod' 
+                : 'whatsapp-sessions-dev';
+        } else {
+            this.bucketName = bucketName;
+        }
+        
         this.sessionId = sessionId
         this.state = {
             creds: null,
             keys: {}
         }
+        
+        console.log(`[SupabaseAuthState]: Usando bucket: ${this.bucketName} (ambiente: ${process.env.NODE_ENV || 'development'})`);
     }
 
     /**
@@ -228,7 +240,8 @@ async function useSupabaseAuthState(supabaseUrl, supabaseKey, sessionId = 'defau
             throw new Error('Supabase URL o Service Key no están configurados en las variables de entorno');
         }
 
-        const authState = new SupabaseAuthState(supabaseUrl, supabaseKey, 'whatsapp-sessions', sessionId);
+        // Usar null para que el constructor determine automáticamente el bucket según el ambiente
+        const authState = new SupabaseAuthState(supabaseUrl, supabaseKey, null, sessionId);
         const result = await authState.init();
         
         console.log('[DEBUG]: SupabaseAuthState inicializado exitosamente');
