@@ -5,6 +5,7 @@ import SupabaseDB from '../database/supabase.adapter.js';
 import SessionSyncService from '../database/services/session-sync.js';
 import { welcomeFlow } from './flows/welcome.flow.js';
 import { agentFlow } from './flows/agent.flow.js';
+import { mainFlow } from './flows/main.flow.js';
 
 dotenv.config();
 
@@ -35,7 +36,7 @@ const main = async () => {
       console.warn('[DEBUG]: Sincronización de sesiones no disponible:', error.message);
     }
 
-    const adapterFlow = createFlow([agentFlow]);
+    const adapterFlow = createFlow([mainFlow, welcomeFlow, agentFlow]);
     
     // Usar autenticación local estándar de BuilderBot
     console.log('[DEBUG]: Configurando autenticación local...');
