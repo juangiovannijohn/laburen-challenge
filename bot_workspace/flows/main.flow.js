@@ -1,7 +1,7 @@
 import { addKeyword, EVENTS } from '@builderbot/bot';
 import MessageBuffer from '../middleware/messageBuffer.js';
 import { agentFlow } from './agent.flow.js';
-import { configFlow, checkBotStatus, botState, isAuthorizedUser } from './config.flow.js';
+import { configFlow, isAuthorizedUser, isBotPaused, incrementMessageCount, initializeBotState } from './config.flow.js';
 
 // Crear instancia global del buffer de mensajes
 const messageBuffer = new MessageBuffer(2000); // 2 segundos de delay
@@ -13,8 +13,11 @@ const messageBuffer = new MessageBuffer(2000); // 2 segundos de delay
 export const mainFlow = addKeyword(EVENTS.WELCOME)
   .addAction(async (ctx, { flowDynamic, gotoFlow, state }) => {
     try {
+      // Inicializar el estado del bot al primer mensaje
+      await initializeBotState();
+      
       // Verificar si el bot está pausado
-      if (checkBotStatus()) {
+      if (isBotPaused()) {
         console.log(`[MainFlow]: Bot pausado, ignorando mensaje de ${ctx.from}`);
         
         // Solo procesar comandos de activación
@@ -46,9 +49,6 @@ export const mainFlow = addKeyword(EVENTS.WELCOME)
       };
 
       console.log(`[MainFlow]: Mensaje recibido de ${userId}: "${ctx.body}"`);
-
-      // Incrementar contador de mensajes totales
-      botState.totalMessages++;
 
       // Configurar callback de procesamiento si no está configurado
       if (!messageBuffer.processingCallback) {
@@ -128,6 +128,10 @@ async function processGroupedMessages(userId, groupedMessages, combinedText, { f
 
     // Por defecto, enviar al agentFlow con el contexto agrupado
     console.log(`[MainFlow]: Enviando a agentFlow con ${groupedMessages.length} mensajes agrupados`);
+    
+    // Incrementar contador de mensajes procesados
+    await incrementMessageCount();
+    
     return gotoFlow(agentFlow);
 
   } catch (error) {

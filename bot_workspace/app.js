@@ -6,11 +6,16 @@ import SessionSyncService from '../database/services/session-sync.js';
 import { mainFlow } from './flows/main.flow.js';
 import { configFlow } from './flows/config.flow.js';
 import { agentFlow } from './flows/agent.flow.js';
+import { initializeBotState } from './flows/config.flow.js';
 
 const PORT = process.env.BOT_PORT || 3002;
 
 const main = async () => {
   try {
+    // Inicializar el estado del bot desde la base de datos al arrancar
+    console.log('[APP]: Inicializando estado del bot...');
+    await initializeBotState();
+    console.log('[APP]: Estado del bot inicializado correctamente');
 
     const adapterDB = new SupabaseDB();
 

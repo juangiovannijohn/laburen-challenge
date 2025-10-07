@@ -59,3 +59,84 @@ BEGIN
             updated_at = NOW();
     END;
     $func$ LANGUAGE plpgsql;
+
+-- Tabla de Configuración del Bot
+-- Almacena el estado persistente del bot (activo/pausado, quién lo pausó, etc.)
+CREATE TABLE bot_config (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    environment TEXT NOT NULL DEFAULT 'development', -- 'development' o 'production'
+    is_paused BOOLEAN NOT NULL DEFAULT FALSE, -- Estado del bot (activo/pausado)
+    paused_at TIMESTAMPTZ, -- Cuándo se pausó el bot
+    paused_by TEXT, -- Número de teléfono del administrador que pausó el bot
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    -- Asegurar que solo haya un registro por ambiente
+    UNIQUE (environment)
+);
+
+-- Función para crear la configuración inicial del bot si no existe
+CREATE OR REPLACE FUNCTION create_bot_config_if_not_exists(p_environment TEXT)
+    RETURNS VOID AS $func$
+BEGIN
+    INSERT INTO bot_config (environment, is_paused, created_at, updated_at)
+        VALUES (p_environment, FALSE, NOW(), NOW())
+    ON CONFLICT (environment) DO NOTHING;
+END;
+$func$ LANGUAGE plpgsql;
+
+-- Función para actualizar el estado del bot
+CREATE OR REPLACE FUNCTION update_bot_state(
+    p_environment TEXT,
+    p_is_paused BOOLEAN,
+    p_paused_by TEXT DEFAULT NULL
+)
+    RETURNS VOID AS $func$
+BEGIN
+    INSERT INTO bot_config (
+        environment, 
+        is_paused, 
+        paused_at, 
+        paused_by, 
+        created_at, 
+        updated_at
+    )
+    VALUES (
+        p_environment,
+        p_is_paused,
+        CASE WHEN p_is_paused THEN NOW() ELSE NULL END,
+        CASE WHEN p_is_paused THEN p_paused_by ELSE NULL END,
+        NOW(),
+        NOW()
+    )
+    ON CONFLICT (environment)
+    DO UPDATE SET
+        is_paused = p_is_paused,
+        paused_at = CASE WHEN p_is_paused THEN NOW() ELSE NULL END,
+        paused_by = CASE WHEN p_is_paused THEN p_paused_by ELSE NULL END,
+        updated_at = NOW();
+END;
+$func$ LANGUAGE plpgsql;
+
+-- Función para obtener la configuración del bot
+CREATE OR REPLACE FUNCTION get_bot_config(p_environment TEXT)
+    RETURNS TABLE(
+        id BIGINT,
+        environment TEXT,
+        is_paused BOOLEAN,
+        paused_at TIMESTAMPTZ,
+        paused_by TEXT,
+        created_at TIMESTAMPTZ,
+        updated_at TIMESTAMPTZ
+    ) AS $func$
+BEGIN
+    -- Crear configuración si no existe
+    PERFORM create_bot_config_if_not_exists(p_environment);
+    
+    -- Retornar la configuración
+    RETURN QUERY
+    SELECT bc.id, bc.environment, bc.is_paused, bc.paused_at, bc.paused_by, 
+           bc.created_at, bc.updated_at
+    FROM bot_config bc
+    WHERE bc.environment = p_environment;
+END;
+$func$ LANGUAGE plpgsql;
