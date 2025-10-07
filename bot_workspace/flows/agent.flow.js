@@ -35,15 +35,6 @@ const agentFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, { flowDynamic
     const aiResponse = await runAgent(combinedText, ctx.history, dynamicContext);
     await flowDynamic(aiResponse);
 
-    // // Respuesta temporal que indica que se procesaron mensajes agrupados
-    // let response = 'Soy tu asistente de ventas. Puedo ayudarte a:\n\n' +
-    //   '- **Buscar productos:** Encuentra lo que necesitas en nuestro catálogo, ya sea por nombre, tipo de prenda, talla, color o categoría.\n' +
-    //   '- **Ver detalles de productos:** Si tienes el ID de un producto, puedo darte toda su información.\n' +
-    //   '- **Gestionar tu carrito de compras:** Puedes crear un carrito, añadir productos, modificar cantidades o eliminar ítems.\n\n' +
-    //   '¿En qué puedo ayudarte hoy?';
-
-    // await flowDynamic(response);
-
   } catch (error) {
     console.error('[ERROR] en agentFlow:', error);
     await flowDynamic(
