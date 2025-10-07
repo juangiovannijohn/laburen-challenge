@@ -1,5 +1,5 @@
 import { addKeyword, EVENTS } from '@builderbot/bot';
-import MessageBuffer from '../middleware/messageBuffer.js';
+import { AUTHORIZED_NUMBERS } from '../../config/config.js';
 
 // Estado global del bot
 let botState = {
@@ -8,6 +8,24 @@ let botState = {
     totalMessages: 0,
     configCommands: 0
 };
+
+/**
+ * Verifica si un número está autorizado para usar comandos de configuración
+ * @param {string} phone - Número de teléfono del usuario
+ * @returns {boolean} - True si está autorizado, false si no
+ */
+function isAuthorizedUser(phone) {
+    // Limpiar el número de teléfono (remover espacios, guiones, etc.)
+    console.log(`[ConfigFlow] Número original: ${phone}`);
+    const cleanPhone = phone.replace(/[\s\-\+\(\)]/g, '');
+    console.log(`[ConfigFlow] Número limpio: ${cleanPhone}`);
+        
+        // Comprobar si el número está en la lista de autorizados
+        const isAuthorized = AUTHORIZED_NUMBERS.includes(cleanPhone);
+        console.log(`[ConfigFlow] Autorizado: ${isAuthorized}`);
+        
+        return isAuthorized;
+}
 
 /**
  * Flow de configuración del bot
@@ -19,6 +37,13 @@ const configFlow = addKeyword(['#config', '#admin', '#bot'])
         const command = body.toLowerCase().trim();
         
         console.log(`[ConfigFlow] Comando recibido de ${from}: ${command}`);
+        
+        // Verificar autorización antes de procesar cualquier comando
+        if (!isAuthorizedUser(from)) {
+            console.log(`[ConfigFlow] Acceso denegado para ${from}`);
+            return endFlow();
+        }
+        
         botState.configCommands++;
         
         // Comandos de configuración
@@ -58,10 +83,7 @@ Escribe "productos" para ver nuestro catálogo.`;
                 
             case '#limpiar':
             case '#clear':
-                // Limpiar buffers de mensajes
-                const messageBuffer = new MessageBuffer();
-                const cleared = messageBuffer.clearAllBuffers();
-                await flowDynamic(`🧹 *Buffers limpiados*\n\nSe limpiaron ${cleared} buffers activos.`);
+                await flowDynamic(`🧹 *Función de limpieza*\n\nEsta función ha sido deshabilitada temporalmente.`);
                 break;
                 
             case '#reiniciar':
@@ -90,7 +112,6 @@ Escribe "productos" para ver nuestro catálogo.`;
 
 *Acciones:*
 • #promocion - Enviar mensaje promocional
-• #limpiar - Limpiar buffers de mensajes
 
 *Estado actual:* ${botState.isPaused ? '🔴 Pausado' : '🟢 Activo'}`;
                 await flowDynamic(helpMessage);
@@ -107,8 +128,6 @@ Escribe "productos" para ver nuestro catálogo.`;
  * Función para obtener estadísticas del bot
  */
 async function getStats() {
-    const messageBuffer = new MessageBuffer();
-    const bufferStats = messageBuffer.getStats();
     const uptime = botState.pausedAt ? 
         `Pausado desde: ${botState.pausedAt.toLocaleString()}` : 
         'Funcionando normalmente';
@@ -121,10 +140,6 @@ async function getStats() {
 *Mensajes:*
 • Total procesados: ${botState.totalMessages}
 • Comandos config: ${botState.configCommands}
-
-*Buffer de Mensajes:*
-• Buffers activos: ${bufferStats.activeBuffers}
-• Total procesados: ${bufferStats.totalProcessed}
 
 *Última actualización:* ${new Date().toLocaleString()}`;
 }
@@ -139,5 +154,6 @@ function checkBotStatus() {
 export { 
     configFlow, 
     checkBotStatus,
-    botState 
+    botState,
+    isAuthorizedUser
 };

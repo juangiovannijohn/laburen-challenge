@@ -1,7 +1,7 @@
 import { addKeyword, EVENTS } from '@builderbot/bot';
 import MessageBuffer from '../middleware/messageBuffer.js';
 import { agentFlow } from './agent.flow.js';
-import { configFlow, checkBotStatus, botState } from './config.flow.js';
+import { configFlow, checkBotStatus, botState, isAuthorizedUser } from './config.flow.js';
 
 // Crear instancia global del buffer de mensajes
 const messageBuffer = new MessageBuffer(2000); // 2 segundos de delay
@@ -19,8 +19,16 @@ export const mainFlow = addKeyword(EVENTS.WELCOME)
         
         // Solo procesar comandos de activación
         const message = ctx.body.toLowerCase().trim();
-        if (message === '#activar' || message === '#resume') {
-          console.log(`[MainFlow]: Comando de activación detectado, redirigiendo a configFlow`);
+        if (message === '#activar' || message === '#resume' || message === '#stats' || message === '#estadisticas' || message === '#ayuda' || message === '#help') {
+          console.log(`[MainFlow]: Comando de activación detectado de ${ctx.from}`);
+          
+          // Verificar autorización antes de redirigir al configFlow
+          if (!isAuthorizedUser(ctx.from)) {
+            console.log(`[MainFlow]: Acceso denegado para ${ctx.from} - no autorizado para comandos de configuración`);
+            return; // Terminar silenciosamente sin responder
+          }
+          
+          console.log(`[MainFlow]: Usuario autorizado, redirigiendo a configFlow`);
           return gotoFlow(configFlow);
         }
         
@@ -105,7 +113,16 @@ async function processGroupedMessages(userId, groupedMessages, combinedText, { f
                            lowerText.includes('#bot');
 
     if (hasConfigCommand) {
-      console.log(`[MainFlow]: Enviando a configFlow (contiene comando de configuración)`);
+      console.log(`[MainFlow]: Comando de configuración detectado de ${userId}`);
+      
+      // Verificar autorización antes de redirigir al configFlow
+      if (!isAuthorizedUser(userId)) {
+        console.log(`[MainFlow]: Acceso denegado para ${userId} - no autorizado para comandos de configuración`);
+        await flowDynamic('🚫 *Acceso Denegado*\n\nNo tienes permisos para usar comandos de configuración.');
+        return;
+      }
+      
+      console.log(`[MainFlow]: Usuario autorizado, enviando a configFlow`);
       return gotoFlow(configFlow);
     }
 
