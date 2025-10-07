@@ -17,7 +17,7 @@ export const mainFlow = addKeyword(EVENTS.WELCOME)
       await initializeBotState();
       
       // Verificar si el bot está pausado
-      if (isBotPaused()) {
+      if (await isBotPaused()) {
         console.log(`[MainFlow]: Bot pausado, ignorando mensaje de ${ctx.from}`);
         
         // Solo procesar comandos de activación

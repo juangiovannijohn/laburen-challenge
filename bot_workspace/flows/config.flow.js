@@ -174,18 +174,55 @@ const configFlow = addKeyword(EVENTS.ACTION)
 
 /**
  * Función para obtener el estado actual del bot
+ * Obtiene información actualizada de la base de datos y sincroniza el estado en memoria
  * @returns {Object} Estado actual del bot
  */
-function getBotState() {
-    return { ...botState };
+async function getBotState() {
+    try {
+        // Obtener información actualizada de la base de datos
+        const dbConfig = await botConfigService.getBotConfig();
+        
+        // Actualizar el estado en memoria con los datos de la DB
+        botState.isPaused = dbConfig.is_paused;
+        botState.pausedAt = dbConfig.paused_at ? new Date(dbConfig.paused_at) : null;
+        botState.pausedBy = dbConfig.paused_by;
+        
+        // Retornar el estado actualizado
+        return { 
+            ...botState,
+            // Agregar información adicional de la DB
+            createdAt: new Date(dbConfig.created_at),
+            updatedAt: new Date(dbConfig.updated_at),
+            environment: botConfigService.getEnvironment()
+        };
+    } catch (error) {
+        console.error('❌ Error al obtener estado del bot desde la DB:', error);
+        // En caso de error, retornar el estado en memoria
+        return { ...botState };
+    }
 }
 
 /**
  * Función para verificar si el bot está pausado
+ * Consulta el estado actual directamente desde la base de datos
  * @returns {boolean} True si el bot está pausado
  */
-function isBotPaused() {
-    return botState.isPaused;
+async function isBotPaused() {
+    try {
+        // Obtener estado actualizado de la base de datos
+        const dbConfig = await botConfigService.getBotConfig();
+        
+        // Actualizar el estado en memoria
+        botState.isPaused = dbConfig.is_paused;
+        botState.pausedAt = dbConfig.paused_at ? new Date(dbConfig.paused_at) : null;
+        botState.pausedBy = dbConfig.paused_by;
+        
+        return dbConfig.is_paused;
+    } catch (error) {
+        console.error('❌ Error al verificar estado de pausa desde la DB:', error);
+        // En caso de error, usar el estado en memoria como fallback
+        return botState.isPaused;
+    }
 }
 
 /**
