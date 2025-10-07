@@ -4,7 +4,7 @@
  */
 
 class MessageBuffer {
-  constructor(delayMs = 2000) {
+  constructor(delayMs = 5000) {
     this.buffers = new Map(); // userId -> {messages: [], timeout: timeoutId, startTime: number}
     this.delay = delayMs;
     this.processingCallback = null;
@@ -25,14 +25,14 @@ class MessageBuffer {
    * @returns {boolean} - true si el mensaje fue buffeado, false si debe procesarse inmediatamente
    */
   addMessage(userId, message) {
-    // Verificar si es un saludo (no buffear saludos)
-    const greetings = ['hola', 'buenas', 'hey', 'buenos dias', 'buenas tardes'];
-    const isGreeting = greetings.some(greeting => 
-      message.body.toLowerCase().includes(greeting.toLowerCase())
-    );
+    // Verificar si es un comando de configuración (no buffear comandos que empiezan con #)
+    const isConfigCommand = message.body.toLowerCase().startsWith('#') ||
+                           message.body.toLowerCase().includes('#config') ||
+                           message.body.toLowerCase().includes('#admin') ||
+                           message.body.toLowerCase().includes('#bot');
 
-    if (isGreeting) {
-      console.log(`[MessageBuffer]: Saludo detectado, no buffeando: "${message.body}"`);
+    if (isConfigCommand) {
+      console.log(`[MessageBuffer]: Comando de configuración detectado, no buffeando: "${message.body}"`);
       return false; // No buffear, procesar inmediatamente
     }
 

@@ -1,13 +1,11 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { createBot, createProvider, createFlow } from '@builderbot/bot';
 import { BaileysProvider } from '@builderbot/provider-baileys';
 import SupabaseDB from '../database/supabase.adapter.js';
 import SessionSyncService from '../database/services/session-sync.js';
-import { welcomeFlow } from './flows/welcome.flow.js';
-import { agentFlow } from './flows/agent.flow.js';
 import { mainFlow } from './flows/main.flow.js';
-
-dotenv.config();
+import { configFlow } from './flows/config.flow.js';
+import { agentFlow } from './flows/agent.flow.js';
 
 const PORT = process.env.BOT_PORT || 3002;
 
@@ -36,7 +34,7 @@ const main = async () => {
       console.warn('[DEBUG]: Sincronización de sesiones no disponible:', error.message);
     }
 
-    const adapterFlow = createFlow([mainFlow, welcomeFlow, agentFlow]);
+    const adapterFlow = createFlow([mainFlow, configFlow, agentFlow]);
     
     // Usar autenticación local estándar de BuilderBot
     console.log('[DEBUG]: Configurando autenticación local...');
